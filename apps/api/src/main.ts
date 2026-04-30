@@ -2,8 +2,7 @@ import "reflect-metadata";
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { ExpressAdapter } from "@nestjs/platform-express";
-import type { Request, Response } from "express";
-import * as express from "express";
+import express, { type Application, type Request, type Response } from "express";
 import { AppModule } from "./app.module";
 
 function configureApp(app: import("@nestjs/common").INestApplication) {
@@ -11,9 +10,9 @@ function configureApp(app: import("@nestjs/common").INestApplication) {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 }
 
-let expressAppPromise: Promise<express.Application> | undefined;
+let expressAppPromise: Promise<Application> | undefined;
 
-async function getExpressApp(): Promise<express.Application> {
+async function getExpressApp(): Promise<Application> {
   if (!expressAppPromise) {
     expressAppPromise = (async () => {
       const server = express();
