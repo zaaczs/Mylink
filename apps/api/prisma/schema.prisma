@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(cuid())
+  email             String             @unique
+  passwordHash      String?
+  createdAt         DateTime           @default(now())
+  instagramAccounts InstagramAccount[]
+  automations       Automation[]
+  logs              AutomationLog[]
+  oauthStates       OAuthState[]
+}
+
+model OAuthState {
+  id        String   @id @default(cuid())
+  state     String   @unique
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model InstagramAccount {
+  id           String   @id @default(cuid())
+  userId       String
+  accessToken  String
+  igUserId     String
+  pageId       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Automation {
+  id            String   @id @default(cuid())
+  userId        String
+  postId        String
+  keywords      String
+  replyComment  String
+  dmMessage     String
+  link          String
+  isActive      Boolean  @default(true)
+  sentCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs          AutomationLog[]
+}
+
+model AutomationLog {
+  id            String   @id @default(cuid())
+  userId        String
+  automationId  String
+  commentId     String
+  commentText   String
+  actionStatus  String
+  createdAt     DateTime @default(now())
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  automation    Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+}
