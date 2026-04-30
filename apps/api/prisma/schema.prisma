@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -49,7 +49,7 @@ model Automation {
   isActive      Boolean  @default(true)
   sentCount     Int      @default(0)
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt   DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   logs          AutomationLog[]
 }

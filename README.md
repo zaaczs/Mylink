@@ -5,16 +5,19 @@ MVP inspirado no Manychat para automação de envio de links via Direct com base
 ## Stack
 - Frontend: Next.js + Tailwind + Zustand
 - Backend: NestJS + Prisma + BullMQ
-- Banco: SQLite (MVP local)
+- Banco: PostgreSQL (Supabase ou outro host; `DATABASE_URL` no `apps/api/.env` e na Vercel)
 - Fila: processamento inline (BullMQ + Redis opcional)
 
 ## Subir ambiente
 1. `npm install`
-2. Copie `apps/api/.env.example` para `apps/api/.env` e preencha `JWT_SECRET`, `META_APP_ID` e `META_APP_SECRET` se for usar OAuth.
-3. `npm run prisma:generate`
-4. `npm run prisma:migrate`
-5. `npm run dev:api` (terminal 1)
-6. `npm run dev:web` (terminal 2)
+2. No Supabase: **Project Settings → Database → Connection string (URI)**. Copie `apps/api/.env.example` para `apps/api/.env` e defina `DATABASE_URL` (substitua `[YOUR-PASSWORD]`). Para Prisma/migrações, use em geral a **ligação direta** (porta `5432`); pooler (`6543`) é opcional para runtime na Vercel.
+3. Preencha `JWT_SECRET`, `META_APP_ID` e `META_APP_SECRET` se for usar OAuth.
+4. `npm run prisma:generate`
+5. `npm run prisma:deploy` (aplica migrações na base remota) ou `npm run prisma:migrate` ao alterar o schema.
+6. `npm run dev:api` (terminal 1)
+7. `npm run dev:web` (terminal 2)
+
+Na **Vercel**, defina a mesma `DATABASE_URL` em **Environment Variables** (o build da API corre `prisma migrate deploy`).
 
 ## Login (teste)
 1. Abra http://localhost:3000/login

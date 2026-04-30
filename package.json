@@ -12,6 +12,7 @@
     "build": "npm run build -w api && npm run build -w web",
     "lint": "npm run lint -w api && npm run lint -w web",
     "prisma:generate": "npm run prisma:generate -w api",
-    "prisma:migrate": "npm run prisma:migrate -w api"
+    "prisma:migrate": "npm run prisma:migrate -w api",
+    "prisma:deploy": "npm run prisma:deploy -w api"
   }
 }

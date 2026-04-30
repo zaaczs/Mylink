@@ -13,9 +13,8 @@ loadEnv({ path: path.join(__dirname, "..", ".env") });
 function ensureDatabaseUrl(): void {
   if (process.env.DATABASE_URL?.trim()) return;
   throw new Error(
-    "DATABASE_URL não está definida. Na Vercel: Project → Settings → Environment Variables → " +
-      "adicione DATABASE_URL (Production e Preview). Em serverless, use uma base remota " +
-      "(ex.: Neon ou Supabase com Postgres — ajuste o provider no schema Prisma se migrar de SQLite)."
+    "DATABASE_URL não está definida. Copie a URI em Supabase → Settings → Database → Connection string, " +
+      "e defina em apps/api/.env (local) ou na Vercel → Environment Variables (Production / Preview)."
   );
 }
 
