@@ -55,12 +55,15 @@ export class WebhookService implements OnModuleInit {
     const automation = await this.automationService.findActiveForComment(mediaId, webhookAccountId);
     if (!automation) return;
 
-    const keywords = automation.keywords
+    const keywordSource: string = String(automation.keywords);
+    const keywords = keywordSource
       .split(",")
-      .map((value) => value.trim())
-      .filter((value) => value.length > 0);
+      .map((value: string) => value.trim())
+      .filter((value: string) => value.length > 0);
     const normalizedComment = commentText.toLowerCase();
-    const matchedKeyword = keywords.find((keyword) => normalizedComment.includes(keyword));
+    const matchedKeyword = keywords.find((keyword: string) =>
+      normalizedComment.includes(keyword)
+    );
     if (!matchedKeyword) return;
 
     try {
