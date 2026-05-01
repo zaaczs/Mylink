@@ -2,8 +2,23 @@ import axios from "axios";
 import type { TriggerAutomationDraft } from "@/store/automation";
 import { clearToken, getToken } from "@/lib/auth";
 
+function normalizeApiBaseUrl(rawValue: string | undefined): string {
+  const localDefault = "http://localhost:3333";
+  const productionDefault = "https://mylink-api.vercel.app";
+  const fallback = process.env.NODE_ENV === "production" ? productionDefault : localDefault;
+
+  if (!rawValue) return fallback;
+
+  // Remove BOM/espacos e corrige protocolo quebrado (ex.: "https:/api...")
+  let value = rawValue.replace(/^\uFEFF/, "").trim();
+  value = value.replace(/^https:\/(?!\/)/i, "https://").replace(/^http:\/(?!\/)/i, "http://");
+
+  if (!/^https?:\/\//i.test(value)) return fallback;
+  return value.replace(/\/+$/, "");
+}
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333"
+  baseURL: normalizeApiBaseUrl(process.env.NEXT_PUBLIC_API_URL)
 });
 
 api.interceptors.request.use((config) => {
