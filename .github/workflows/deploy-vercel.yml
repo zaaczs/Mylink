@@ -1,0 +1,40 @@
+name: Deploy Vercel (api + web)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vercel-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-api:
+    name: Deploy API project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate API deploy hook
+        run: |
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK_API }}" ]; then
+            echo "Missing repository secret: VERCEL_DEPLOY_HOOK_API"
+            exit 1
+          fi
+
+      - name: Trigger API deployment
+        run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_API }}"
+
+  deploy-web:
+    name: Deploy Web project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Web deploy hook
+        run: |
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK_WEB }}" ]; then
+            echo "Missing repository secret: VERCEL_DEPLOY_HOOK_WEB"
+            exit 1
+          fi
+
+      - name: Trigger Web deployment
+        run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_WEB }}"

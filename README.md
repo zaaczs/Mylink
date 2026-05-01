@@ -42,3 +42,16 @@ Na **Vercel**, defina a mesma `DATABASE_URL` em **Environment Variables** (o bui
 - Use somente API oficial Graph
 - Configure webhook e permissões no app Meta
 - Em ambiente local, use ngrok/cloudflared para webhook público
+
+## Deploy automático no commit (Vercel)
+Para garantir que **API e Web** atualizem automaticamente no push da `main`, este repositório inclui o workflow:
+- `.github/workflows/deploy-vercel.yml`
+
+### Como configurar (uma vez)
+1. Em cada projeto na Vercel (`mylink-api` e `mylink-web`), crie um **Deploy Hook** para Production.
+2. No GitHub do repositório, abra **Settings -> Secrets and variables -> Actions** e adicione:
+   - `VERCEL_DEPLOY_HOOK_API`
+   - `VERCEL_DEPLOY_HOOK_WEB`
+3. Faça push para `main`.
+
+Pronto: a cada commit na `main`, o GitHub Actions dispara deploy dos dois projetos.
