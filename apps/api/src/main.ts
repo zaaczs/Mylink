@@ -11,11 +11,18 @@ import { AppModule } from "./app.module";
 loadEnv({ path: path.join(__dirname, "..", ".env") });
 
 function ensureDatabaseUrl(): void {
-  if (process.env.DATABASE_URL?.trim()) return;
-  throw new Error(
-    "DATABASE_URL não está definida. Copie a URI em Supabase → Settings → Database → Connection string, " +
-      "e defina em apps/api/.env (local) ou na Vercel → Environment Variables (Production / Preview)."
-  );
+  if (!process.env.DATABASE_URL?.trim()) {
+    throw new Error(
+      "DATABASE_URL não está definida. Supabase → Connect; em Vercel use Transaction pooler (6543) com ?pgbouncer=true. " +
+        "Defina em apps/api/.env ou nas Environment Variables."
+    );
+  }
+  if (!process.env.DIRECT_URL?.trim()) {
+    throw new Error(
+      "DIRECT_URL não está definida (necessária para Prisma Migrate). Em Vercel use Session pooler (host pooler, porta 5432); " +
+        "em dev local pode ser igual a DATABASE_URL. Ver apps/api/.env.example."
+    );
+  }
 }
 
 function configureApp(app: import("@nestjs/common").INestApplication) {
