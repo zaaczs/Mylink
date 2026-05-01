@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { MetaIntegrationStatus } from "@/lib/api";
-import { fetchMetaIntegration, saveMetaManual, startMetaOAuth } from "@/lib/api";
+import { fetchMetaIntegration, formatApiError, saveMetaManual, startMetaOAuth } from "@/lib/api";
 
 export function IntegrationsPanel() {
   const searchParams = useSearchParams();
@@ -49,8 +49,8 @@ export function IntegrationsPanel() {
     try {
       const { url } = await startMetaOAuth();
       window.location.href = url;
-    } catch {
-      setStatus("Não foi possível iniciar o OAuth (configure META_APP_ID no servidor).");
+    } catch (error) {
+      setStatus(`Não foi possível iniciar o OAuth. ${formatApiError(error)}`);
       setLoading(false);
     }
   }
