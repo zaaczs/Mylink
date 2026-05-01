@@ -7,6 +7,7 @@
     "build": "prisma generate && prisma migrate deploy && nest build",
     "start": "node dist/main.js",
     "lint": "echo lint-ok",
+    "test": "vitest run",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy"
@@ -40,6 +41,7 @@
     "@types/express": "5.0.0",
     "@types/node": "22.8.1",
     "@types/passport-jwt": "4.0.1",
+    "vitest": "^3.2.4",
     "prisma": "5.22.0",
     "ts-node": "10.9.2",
     "typescript": "5.6.3"

@@ -88,6 +88,13 @@ export type DirectFlowPayload = {
   linkCardTitle?: string;
 };
 
+export type TriggerFlowPayload = {
+  postId: string;
+  keywords: string[];
+  replyToCommentEnabled: boolean;
+  commentReplyVariants: [string, string, string];
+};
+
 export async function login(email: string, password: string) {
   const { data } = await api.post<{ access_token: string }>("/auth/login", { email, password });
   return data;
@@ -105,6 +112,16 @@ export async function fetchPosts() {
 
 export async function createTriggerAutomation(payload: TriggerAutomationDraft) {
   const { data } = await api.post<AutomationRecord>("/automation", {
+    postId: payload.postId,
+    keywords: payload.keywords,
+    replyToCommentEnabled: payload.replyToCommentEnabled,
+    commentReplyVariants: [...payload.commentReplyVariants]
+  });
+  return data;
+}
+
+export async function updateAutomationTrigger(id: string, payload: TriggerFlowPayload) {
+  const { data } = await api.patch<AutomationRecord>(`/automation/${id}/trigger`, {
     postId: payload.postId,
     keywords: payload.keywords,
     replyToCommentEnabled: payload.replyToCommentEnabled,

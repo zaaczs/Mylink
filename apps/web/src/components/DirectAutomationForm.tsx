@@ -124,9 +124,14 @@ export function DirectAutomationForm() {
               comentário.
             </p>
           </div>
-          <Link href="/automacoes" className="text-sm font-medium text-zinc-600 hover:text-zinc-900">
-            Voltar à lista
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href={`/automacoes/${id}/gatilho`} className="text-sm font-medium text-zinc-600 hover:text-zinc-900">
+              Editar gatilho
+            </Link>
+            <Link href="/automacoes" className="text-sm font-medium text-zinc-600 hover:text-zinc-900">
+              Voltar à lista
+            </Link>
+          </div>
         </div>
 
         <div className="space-y-4">

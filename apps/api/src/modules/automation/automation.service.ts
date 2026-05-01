@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma.service";
 import { CreateTriggerAutomationDto } from "./create-trigger-automation.dto";
+import { UpdateTriggerAutomationDto } from "./update-trigger-automation.dto";
 import { UpdateAutomationDmDto } from "./update-automation-dm.dto";
 import { serializePublicReplies } from "./public-reply.util";
 
@@ -13,11 +14,20 @@ const DM_TEMPLATE_EMPTY = JSON.stringify({ v: 2, body: "", linkButtonTitle: "Abr
 export class AutomationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createTrigger(userId: string, dto: CreateTriggerAutomationDto) {
-    const keywords = dto.keywords.map((k) => k.trim().toLowerCase()).filter((k) => k.length > 0);
+  private normalizeKeywords(input: string[]) {
+    return input.map((k) => k.trim().toLowerCase()).filter((k) => k.length > 0);
+  }
+
+  private ensureKeywords(input: string[]) {
+    const keywords = this.normalizeKeywords(input);
     if (!keywords.length) {
       throw new BadRequestException("Informe ao menos uma palavra-chave.");
     }
+    return keywords;
+  }
+
+  async createTrigger(userId: string, dto: CreateTriggerAutomationDto) {
+    const keywords = this.ensureKeywords(dto.keywords);
 
     const replyComment = serializePublicReplies(dto.replyToCommentEnabled, dto.commentReplyVariants);
 
@@ -30,6 +40,21 @@ export class AutomationService {
         dmMessage: DM_TEMPLATE_EMPTY,
         link: "",
         isActive: false
+      }
+    });
+  }
+
+  async updateTrigger(userId: string, id: string, dto: UpdateTriggerAutomationDto) {
+    await this.findByIdForUser(userId, id);
+    const keywords = this.ensureKeywords(dto.keywords);
+    const replyComment = serializePublicReplies(dto.replyToCommentEnabled, dto.commentReplyVariants);
+
+    return this.prisma.automation.update({
+      where: { id },
+      data: {
+        postId: dto.postId,
+        keywords: keywords.join(","),
+        replyComment
       }
     });
   }
@@ -95,7 +120,10 @@ export class AutomationService {
     }
 
     return this.prisma.automation.findFirst({
-      where: { postId: mediaId, isActive: true },
+      where: {
+        isActive: true,
+        OR: [{ postId: mediaId }, { postId: AUTOMATION_ALL_POSTS_POST_ID }]
+      },
       orderBy: { updatedAt: "desc" }
     });
   }
